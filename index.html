@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groic - Local Watch Together App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo & Tagline -->
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 18V5l12-2v13"></path>
+                            <circle cx="6" cy="18" r="3"></circle>
+                            <circle cx="18" cy="16" r="3"></circle>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="logo-title">Groic</h1>
+                        <p class="logo-subtitle">Local Watch Together</p>
+                    </div>
+                </div>
+
+                <!-- User & Status -->
+                <div class="header-right">
+                    <div class="status-badge">
+                        <svg class="status-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                            <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                            <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                        </svg>
+                        <span id="connection-status">Connected</span>
+                        <span class="latency" id="latency">• 42ms</span>
+                    </div>
+                    <div class="user-section">
+                        <div class="status-dot" id="status-dot"></div>
+                        <div class="avatar">YO</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content container">
+        <!-- Join Room Modal (Initial Screen) -->
+        <div id="join-modal" class="modal active">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content join-modal-content">
+                <div class="join-modal-header">
+                    <h2>Welcome to Groic</h2>
+                    <p class="join-modal-subtitle">Watch together with friends in real-time</p>
+                </div>
+                
+                <div class="join-options">
+                    <div class="join-option-card">
+                        <div class="join-option-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                        <h3>Host a Session</h3>
+                        <p>Upload and share your videos</p>
+                        <input type="text" id="host-name-input" class="join-input" placeholder="Enter your name (optional)">
+                        <button class="btn btn-primary" id="create-room-btn">Create Room</button>
+                    </div>
+                    
+                    <div class="join-divider">
+                        <span>OR</span>
+                    </div>
+                    
+                    <div class="join-option-card">
+                        <div class="join-option-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                <polyline points="10 17 15 12 10 7"></polyline>
+                                <line x1="15" y1="12" x2="3" y2="12"></line>
+                            </svg>
+                        </div>
+                        <h3>Join a Session</h3>
+                        <p>Enter hosting ID to join</p>
+                        <input type="text" id="join-name-input" class="join-input" placeholder="Enter your name">
+                        <input type="text" id="room-id-input" class="join-input" placeholder="Enter room ID (e.g., ABCD1234)" maxlength="8">
+                        <button class="btn btn-primary" id="join-room-btn">Join Room</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Upload Section -->
+                <section class="upload-section">
+                    <div class="section-header">
+                        <h2>Upload Media</h2>
+                        <p class="section-description">Share your favorite videos and audio files with friends</p>
+                    </div>
+                    
+                    <!-- Upload Zone -->
+                    <div id="upload-zone" class="upload-zone">
+                        <input type="file" id="file-input" accept="video/*,audio/*" hidden>
+                        <div class="upload-content">
+                            <div class="upload-icon">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                            </div>
+                            <h3 class="upload-title" id="upload-title">Upload your video or audio</h3>
+                            <p class="upload-description">Drag and drop or click to browse</p>
+                            <div class="upload-formats">
+                                <span class="format-badge">Max 2GB</span>
+                                <span class="format-badge">MP4, MKV, MOV, WEBM, MP3, WAV, AAC, FLAC</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Card (hidden by default) -->
+                    <div id="file-card" class="file-card" style="display: none;">
+                        <div class="file-card-content">
+                            <div class="file-icon" id="file-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                                </svg>
+                            </div>
+                            <div class="file-info">
+                                <div class="file-header">
+                                    <div class="file-details">
+                                        <h3 class="file-name" id="file-name">video.mp4</h3>
+                                        <p class="file-size" id="file-size">0 MB</p>
+                                    </div>
+                                    <button class="btn-icon" id="clear-file">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="file-status">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    <span>Ready to host</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Progress (hidden by default) -->
+                    <div id="upload-progress" class="upload-progress-card" style="display: none;">
+                        <div class="progress-header">
+                            <div class="progress-file-info">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                                </svg>
+                                <div>
+                                    <p class="progress-file-name" id="progress-file-name">video.mp4</p>
+                                    <p class="progress-file-size" id="progress-file-size">0 MB</p>
+                                </div>
+                            </div>
+                            <button class="btn-ghost" id="cancel-upload">Cancel</button>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <p class="progress-text" id="progress-text">0% uploaded</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Video Player -->
+                <section class="player-section">
+                    <div class="player-card">
+                        <div class="player-wrapper">
+                            <video id="video-player" class="video-player"></video>
+                            <div id="audio-placeholder" class="audio-placeholder">
+                                <div class="audio-icon-large">
+                                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 18V5l12-2v13"></path>
+                                        <circle cx="6" cy="18" r="3"></circle>
+                                        <circle cx="18" cy="16" r="3"></circle>
+                                    </svg>
+                                </div>
+                                <h3 id="audio-file-name">Audio File</h3>
+                                <p class="audio-subtitle">Audio Playback</p>
+                            </div>
+                            <div id="no-media-placeholder" class="no-media-placeholder">
+                                <div class="no-media-icon">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 18V5l12-2v13"></path>
+                                        <circle cx="6" cy="18" r="3"></circle>
+                                        <circle cx="18" cy="16" r="3"></circle>
+                                    </svg>
+                                </div>
+                                <p>No media loaded</p>
+                                <p class="no-media-subtitle">Upload a video or audio file to get started</p>
+                            </div>
+                        </div>
+
+                        <!-- Player Controls -->
+                        <div class="player-controls">
+                            <!-- Timeline -->
+                            <div class="timeline-section">
+                                <input type="range" id="timeline" class="timeline-slider" min="0" max="100" value="0" step="0.1">
+                                <div class="timeline-time">
+                                    <span id="current-time">00:00</span>
+                                    <span id="duration">00:00</span>
+                                </div>
+                            </div>
+
+                            <!-- Control Buttons -->
+                            <div class="control-buttons">
+                                <button class="btn btn-success" id="play-btn" disabled>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                    </svg>
+                                    Play
+                                </button>
+                                <button class="btn btn-danger" id="pause-btn" disabled>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="6" y="4" width="4" height="16"></rect>
+                                        <rect x="14" y="4" width="4" height="16"></rect>
+                                    </svg>
+                                    Pause
+                                </button>
+                                <button class="btn btn-outline" id="seek-back-btn" disabled>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                                        <line x1="5" y1="19" x2="5" y2="5"></line>
+                                    </svg>
+                                    -10s
+                                </button>
+                                <button class="btn btn-outline" id="seek-forward-btn" disabled>
+                                    +10s
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                                        <line x1="19" y1="5" x2="19" y2="19"></line>
+                                    </svg>
+                                </button>
+
+                                <!-- Volume Control -->
+                                <div class="volume-control">
+                                    <button class="btn-icon" id="mute-btn" disabled>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+                                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                        </svg>
+                                    </button>
+                                    <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="100">
+                                </div>
+
+                                <button class="btn btn-outline" id="share-time-btn" disabled>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    Share Time
+                                </button>
+
+                                <button class="btn-icon" id="fullscreen-btn" disabled>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Hosting Panel -->
+                <section class="card hosting-panel" id="hosting-panel">
+                    <div class="card-header">
+                        <h3>Share & Host</h3>
+                        <div class="timer">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span id="time-remaining">2h 45m</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="hosting-id-section">
+                            <label class="label">Hosting ID</label>
+                            <div class="hosting-id-group">
+                                <div class="hosting-id-badge" id="hosting-id">GROIC-AB12CD34</div>
+                                <button class="btn-icon" id="copy-id-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="help-text">Share this ID with friends to join your session</p>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-outline-purple" id="copy-link-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                </svg>
+                                Copy Link
+                            </button>
+                            <button class="btn btn-outline-purple" id="qr-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                                QR Code
+                            </button>
+                        </div>
+
+                        <button class="btn btn-primary" id="share-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
+                            Share with Friends
+                        </button>
+
+                        <div class="stats">
+                            <span class="stats-label">Participants</span>
+                            <span class="stats-badge" id="participant-count">3</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Participants -->
+                <section class="card">
+                    <div class="card-header">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            Participants
+                        </h3>
+                        <span class="badge-purple">3</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="participants-list" id="participants-list">
+                            <!-- Participants will be added dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Activity Feed -->
+                <section class="card">
+                    <div class="card-header">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            Activity Log
+                        </h3>
+                    </div>
+                    <p class="card-subtitle">Latest events first</p>
+                    <div class="card-content">
+                        <div class="activity-list" id="activity-list">
+                            <!-- Activities will be added dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Chat Section -->
+                <section class="card chat-card">
+                    <div class="card-header">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            Chat
+                        </h3>
+                    </div>
+                    <div class="card-content chat-content">
+                        <div class="chat-messages" id="chat-messages">
+                            <!-- Messages will be added dynamically -->
+                        </div>
+                        <div class="chat-input-container">
+                            <input type="text" id="chat-input" class="chat-input" placeholder="Type a message..." maxlength="500">
+                            <button class="btn-icon" id="send-message-btn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- QR Code Modal -->
+    <div id="qr-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Share via QR Code</h3>
+                <button class="btn-icon" id="close-modal">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <p class="modal-description">Friends can scan this code to join your session instantly</p>
+            
+            <div class="qr-section">
+                <div class="qr-code">
+                    <div class="qr-pattern" id="qr-pattern"></div>
+                </div>
+                <div class="qr-info">
+                    <p class="qr-id" id="modal-hosting-id">GROIC-AB12CD34</p>
+                    <p class="qr-url" id="modal-url">groic.app/j/GROIC-AB12CD34</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-outline flex-1" id="modal-copy-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Copy Link
+                    </button>
+                    <button class="btn btn-primary flex-1" id="download-qr-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
